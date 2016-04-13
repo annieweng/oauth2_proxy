@@ -32,7 +32,7 @@ func NewDsraProvider(p *ProviderData) *DsraProvider {
 		p.ValidateURL = &url.URL{
 			Scheme: "https",
 			Host:   "10.1.90.18",
-			Path:   "/api/v3/user",
+			Path:   "/oauth/api/user",
 		}
 	}
 	if p.Scope == "" {
