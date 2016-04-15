@@ -54,5 +54,5 @@ func (p *DsraProvider) GetEmailAddress(s *SessionState) (string, error) {
 		log.Printf("failed making request %s", err)
 		return "", err
 	}
-	return json.Get("email").String()
+	return json.Get("user").String()
 }
