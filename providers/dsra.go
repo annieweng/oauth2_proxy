@@ -17,21 +17,21 @@ func NewDsraProvider(p *ProviderData) *DsraProvider {
 	if p.LoginURL == nil || p.LoginURL.String() == "" {
 		p.LoginURL = &url.URL{
 			Scheme: "https",
-			Host:   "10.1.90.18",
+			Host:   "10.104.1.9",
 			Path:   "/oauth/authorize",
 		}
 	}
 	if p.RedeemURL == nil || p.RedeemURL.String() == "" {
 		p.RedeemURL = &url.URL{
 			Scheme: "https",
-			Host:   "10.1.90.18",
+			Host:   "10.104.1.9",
 			Path:   "/oauth/token",
 		}
 	}
 	if p.ValidateURL == nil || p.ValidateURL.String() == "" {
 		p.ValidateURL = &url.URL{
 			Scheme: "https",
-			Host:   "10.1.90.18",
+			Host:   "10.104.1.9",
 			Path:   "/oauth/api/user",
 		}
 	}
