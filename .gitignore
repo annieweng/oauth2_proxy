@@ -9,7 +9,8 @@ oauth2_proxy
 # Folders
 _obj
 _test
-
+#config file holds client id/secret and others
+oauth2_proxy.cfg
 # Architecture specific extensions/prefixes
 *.[568vq]
 [568vq].out
