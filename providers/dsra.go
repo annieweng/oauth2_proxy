@@ -4,7 +4,6 @@ import (
 	"log"
 	"net/http"
 	"net/url"
-
 	"github.com/bitly/oauth2_proxy/api"
 )
 
@@ -17,22 +16,22 @@ func NewDsraProvider(p *ProviderData) *DsraProvider {
 	if p.LoginURL == nil || p.LoginURL.String() == "" {
 		p.LoginURL = &url.URL{
 			Scheme: "https",
-			Host:   "10.104.1.9",
+			Host:   "xdataproxy.com",
 			Path:   "/oauth/authorize",
 		}
 	}
 	if p.RedeemURL == nil || p.RedeemURL.String() == "" {
 		p.RedeemURL = &url.URL{
 			Scheme: "https",
-			Host:   "10.104.1.9",
+			Host:   "xdataproxy.com",
 			Path:   "/oauth/token",
 		}
 	}
 	if p.ValidateURL == nil || p.ValidateURL.String() == "" {
 		p.ValidateURL = &url.URL{
 			Scheme: "https",
-			Host:   "10.104.1.9",
-			Path:   "/oauth/api/user",
+			Host:   "xdataproxy.com",
+			Path:   "/oauth/api/me",
 		}
 	}
 	if p.Scope == "" {
@@ -54,5 +53,7 @@ func (p *DsraProvider) GetEmailAddress(s *SessionState) (string, error) {
 		log.Printf("failed making request %s", err)
 		return "", err
 	}
-	return json.Get("user").String()
+	return json.Get("username").String()
 }
+
+
