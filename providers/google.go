@@ -17,6 +17,7 @@ import (
 	"golang.org/x/oauth2"
 	"golang.org/x/oauth2/google"
 	"google.golang.org/api/admin/directory/v1"
+	"google.golang.org/api/googleapi"
 )
 
 type GoogleProvider struct {
@@ -66,7 +67,8 @@ func emailFromIdToken(idToken string) (string, error) {
 	// id_token is a base64 encode ID token payload
 	// https://developers.google.com/accounts/docs/OAuth2Login#obtainuserinfo
 	jwt := strings.Split(idToken, ".")
-	b, err := jwtDecodeSegment(jwt[1])
+	jwtData := strings.TrimSuffix(jwt[1], "=")
+	b, err := base64.RawURLEncoding.DecodeString(jwtData)
 	if err != nil {
 		return "", err
 	}
@@ -86,14 +88,6 @@ func emailFromIdToken(idToken string) (string, error) {
 		return "", fmt.Errorf("email %s not listed as verified", email.Email)
 	}
 	return email.Email, nil
-}
-
-func jwtDecodeSegment(seg string) ([]byte, error) {
-	if l := len(seg) % 4; l > 0 {
-		seg += strings.Repeat("=", 4-l)
-	}
-
-	return base64.URLEncoding.DecodeString(seg)
 }
 
 func (p *GoogleProvider) Redeem(redirectURL, code string) (s *SessionState, err error) {
@@ -197,8 +191,12 @@ func userInGroup(service *admin.Service, groups []string, email string) bool {
 	for _, group := range groups {
 		members, err := fetchGroupMembers(service, group)
 		if err != nil {
-			log.Printf("error fetching group members: %v", err)
-			return false
+			if err, ok := err.(*googleapi.Error); ok && err.Code == 404 {
+				log.Printf("error fetching members for group %s: group does not exist", group)
+			} else {
+				log.Printf("error fetching group members: %v", err)
+				return false
+			}
 		}
 
 		for _, member := range members {

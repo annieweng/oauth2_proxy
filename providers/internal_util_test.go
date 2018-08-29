@@ -7,7 +7,7 @@ import (
 	"net/url"
 	"testing"
 
-	"github.com/bmizerany/assert"
+	"github.com/stretchr/testify/assert"
 )
 
 type ValidateSessionStateTestProvider struct {
@@ -118,4 +118,15 @@ func TestValidateSessionStateExpiredToken(t *testing.T) {
 	defer vt_test.Close()
 	vt_test.response_code = 401
 	assert.Equal(t, false, validateToken(vt_test.provider, "foobar", nil))
+}
+
+func TestStripTokenNotPresent(t *testing.T) {
+	test := "http://local.test/api/test?a=1&b=2"
+	assert.Equal(t, test, stripToken(test))
+}
+
+func TestStripToken(t *testing.T) {
+	test := "http://local.test/api/test?access_token=deadbeef&b=1&c=2"
+	expected := "http://local.test/api/test?access_token=dead...&b=1&c=2"
+	assert.Equal(t, expected, stripToken(test))
 }

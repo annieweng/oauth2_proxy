@@ -3,6 +3,7 @@ package providers
 import (
 	"errors"
 	"fmt"
+	"github.com/bitly/go-simplejson"
 	"github.com/bitly/oauth2_proxy/api"
 	"log"
 	"net/http"
@@ -65,7 +66,27 @@ func getAzureHeader(access_token string) http.Header {
 	return header
 }
 
+func getEmailFromJSON(json *simplejson.Json) (string, error) {
+	var email string
+	var err error
+
+	email, err = json.Get("mail").String()
+
+	if err != nil || email == "" {
+		otherMails, otherMailsErr := json.Get("otherMails").Array()
+		if len(otherMails) > 0 {
+			email = otherMails[0].(string)
+		}
+		err = otherMailsErr
+	}
+
+	return email, err
+}
+
 func (p *AzureProvider) GetEmailAddress(s *SessionState) (string, error) {
+	var email string
+	var err error
+
 	if s.AccessToken == "" {
 		return "", errors.New("missing access token")
 	}
@@ -78,9 +99,26 @@ func (p *AzureProvider) GetEmailAddress(s *SessionState) (string, error) {
 	json, err := api.Request(req)
 
 	if err != nil {
+		return "", err
+	}
+
+	email, err = getEmailFromJSON(json)
+
+	if err == nil && email != "" {
+		return email, err
+	}
+
+	email, err = json.Get("userPrincipalName").String()
+
+	if err != nil {
 		log.Printf("failed making request %s", err)
 		return "", err
 	}
 
-	return json.Get("mail").String()
+	if email == "" {
+		log.Printf("failed to get email address")
+		return "", err
+	}
+
+	return email, err
 }

@@ -1,11 +1,12 @@
 package providers
 
 import (
-	"github.com/bmizerany/assert"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func testAzureProvider(hostname string) *AzureProvider {
@@ -125,11 +126,76 @@ func TestAzureProviderGetEmailAddress(t *testing.T) {
 	b := testAzureBackend(`{ "mail": "user@windows.net" }`)
 	defer b.Close()
 
-	b_url, _ := url.Parse(b.URL)
-	p := testAzureProvider(b_url.Host)
+	bURL, _ := url.Parse(b.URL)
+	p := testAzureProvider(bURL.Host)
 
 	session := &SessionState{AccessToken: "imaginary_access_token"}
 	email, err := p.GetEmailAddress(session)
 	assert.Equal(t, nil, err)
 	assert.Equal(t, "user@windows.net", email)
+}
+
+func TestAzureProviderGetEmailAddressMailNull(t *testing.T) {
+	b := testAzureBackend(`{ "mail": null, "otherMails": ["user@windows.net", "altuser@windows.net"] }`)
+	defer b.Close()
+
+	bURL, _ := url.Parse(b.URL)
+	p := testAzureProvider(bURL.Host)
+
+	session := &SessionState{AccessToken: "imaginary_access_token"}
+	email, err := p.GetEmailAddress(session)
+	assert.Equal(t, nil, err)
+	assert.Equal(t, "user@windows.net", email)
+}
+
+func TestAzureProviderGetEmailAddressGetUserPrincipalName(t *testing.T) {
+	b := testAzureBackend(`{ "mail": null, "otherMails": [], "userPrincipalName": "user@windows.net" }`)
+	defer b.Close()
+
+	bURL, _ := url.Parse(b.URL)
+	p := testAzureProvider(bURL.Host)
+
+	session := &SessionState{AccessToken: "imaginary_access_token"}
+	email, err := p.GetEmailAddress(session)
+	assert.Equal(t, nil, err)
+	assert.Equal(t, "user@windows.net", email)
+}
+
+func TestAzureProviderGetEmailAddressFailToGetEmailAddress(t *testing.T) {
+	b := testAzureBackend(`{ "mail": null, "otherMails": [], "userPrincipalName": null }`)
+	defer b.Close()
+
+	bURL, _ := url.Parse(b.URL)
+	p := testAzureProvider(bURL.Host)
+
+	session := &SessionState{AccessToken: "imaginary_access_token"}
+	email, err := p.GetEmailAddress(session)
+	assert.Equal(t, "type assertion to string failed", err.Error())
+	assert.Equal(t, "", email)
+}
+
+func TestAzureProviderGetEmailAddressEmptyUserPrincipalName(t *testing.T) {
+	b := testAzureBackend(`{ "mail": null, "otherMails": [], "userPrincipalName": "" }`)
+	defer b.Close()
+
+	bURL, _ := url.Parse(b.URL)
+	p := testAzureProvider(bURL.Host)
+
+	session := &SessionState{AccessToken: "imaginary_access_token"}
+	email, err := p.GetEmailAddress(session)
+	assert.Equal(t, nil, err)
+	assert.Equal(t, "", email)
+}
+
+func TestAzureProviderGetEmailAddressIncorrectOtherMails(t *testing.T) {
+	b := testAzureBackend(`{ "mail": null, "otherMails": "", "userPrincipalName": null }`)
+	defer b.Close()
+
+	bURL, _ := url.Parse(b.URL)
+	p := testAzureProvider(bURL.Host)
+
+	session := &SessionState{AccessToken: "imaginary_access_token"}
+	email, err := p.GetEmailAddress(session)
+	assert.Equal(t, "type assertion to string failed", err.Error())
+	assert.Equal(t, "", email)
 }
