@@ -61,7 +61,7 @@ func getTemplates() *template.Template {
 	.btn:hover {
 		background-color: #3071a9;
 		border-color: #285e8e;
-		ext-decoration: none;
+		text-decoration: none;
 	}
 	label {
 		display: inline-block;
@@ -115,7 +115,7 @@ func getTemplates() *template.Template {
 	{{ if .SignInMessage }}
 	<p>{{.SignInMessage}}</p>
 	{{ end}}
-	<button type="submit" class="btn">Sign in with a {{.ProviderName}} Account</button><br/>
+	<button type="submit" class="btn">Sign in with {{.ProviderName}}</button><br/>
 	</form>
 	</div>
 
@@ -129,8 +129,23 @@ func getTemplates() *template.Template {
 	</form>
 	</div>
 	{{ end }}
+	<script>
+		if (window.location.hash) {
+			(function() {
+				var inputs = document.getElementsByName('rd');
+				for (var i = 0; i < inputs.length; i++) {
+					inputs[i].value += window.location.hash;
+				}
+			})();
+		}
+	</script>
 	<footer>
+	{{ if eq .Footer "-" }}
+	{{ else if eq .Footer ""}}
 	Secured with <a href="https://github.com/bitly/oauth2_proxy#oauth2_proxy">OAuth2 Proxy</a> version {{.Version}}
+	{{ else }}
+	{{.Footer}}
+	{{ end }}
 	</footer>
 </body>
 </html>
