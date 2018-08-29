@@ -5,11 +5,6 @@ set -e
 DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 echo "working dir $DIR"
 mkdir -p $DIR/dist
-
-mkdir -p $DIR/.godeps
-export GOPATH=$DIR:$DIR/.godeps
-gpm install
-=======
 dep ensure || exit 1
 
 os=$(go env GOOS)
@@ -19,9 +14,6 @@ goversion=$(go version | awk '{print $3}')
 sha256sum=()
 
 echo "... running tests"
-
-#./test.sh || exit 1
-=======
 ./test.sh
 
 for os in windows linux darwin; do
