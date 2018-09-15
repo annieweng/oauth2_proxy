@@ -42,8 +42,16 @@ func NewDsraProvider(p *ProviderData) *DsraProvider {
 
 func (p *DsraProvider) GetEmailAddress(s *SessionState) (string, error) {
 
-	req, err := http.NewRequest("GET",
-		p.ValidateURL.String()+"?access_token="+s.AccessToken, nil)
+
+   // Create a Bearer string by appending string access token
+    var bearer = "Bearer " + s.AccessToken
+
+    // Create a new request using http
+    req, err := http.NewRequest("GET", p.ValidateURL.String(), nil)
+
+    // add authorization header to the req
+    req.Header.Add("Authorization", bearer)
+
 	if err != nil {
 		log.Printf("failed building request %s", err)
 		return "", err
