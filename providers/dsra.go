@@ -4,6 +4,7 @@ import (
 	"log"
 	"net/http"
 	"net/url"
+	"fmt"
 	"github.com/annieweng/oauth2_proxy/api"
 )
 
