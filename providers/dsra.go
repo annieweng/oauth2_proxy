@@ -57,7 +57,7 @@ func (p *DsraProvider) GetEmailAddress(s *SessionState) (string, error) {
     req, err := http.NewRequest("GET", p.ValidateURL.String(), nil)
 
     // add authorization header to the req
-    req.Header.Set("Authorization", fmt.Sprintf("token %s", s.AccessToken))
+    req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", s.AccessToken))
 
 	if err != nil {
 		log.Printf("failed building request %s", err)
