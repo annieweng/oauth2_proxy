@@ -1,12 +1,12 @@
-etup:
+setup:
 
 	1. download [prebuild Binary] .
 		git clone  https://github.com/annieweng/oauth2_proxy.git
 		download corresponding precompiled bin/*.tar.gz for your OS.  
 
-	2. register an Oauth Application with DSRA Oauth2 provider at https://www.xdataproxy.com/oauth
+	2. register an Oauth Application with DSRA Oauth2 provider at https://oauth2-server.dsra.io
 		take a note of client ID/secret generated from registration. make sure your redirect URL match exactly to where you running the oauth2_proxy from. 
-		typically this will be http[s]://hostname/oauth/callback
+		typically this will be http[s]://hostname/oauth2/callback
 
 	3. configure Nginx to run https and proxy all traffic coming to https://hostname to oauth2_proxy:
 
@@ -43,10 +43,9 @@ etup:
 	⁃	    copy configs/oauth2_proxy.cfg from git source tree to /etc/oauth2_proxy directory
 	   	  change clientid, secret, cookie secret value as need
 
-	⁃	  copy configs/oauth2_proxy.conf to /etc/init/ upstart directory
+	⁃	  copy configs/oauth2_proxy.conf to /etc/supervisor/conf.d/
+	           supervisorctl reread; supervisorctl update;
 
-	⁃	go ahead start the aoauth2_proxy by enter
-			>start oauth2_proxy
 
 		
 	
