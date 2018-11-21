@@ -4,6 +4,7 @@ import (
 	"log"
 	"net/http"
 	"net/url"
+	"fmt"
 	"github.com/annieweng/oauth2_proxy/api"
 )
 
@@ -40,10 +41,24 @@ func NewDsraProvider(p *ProviderData) *DsraProvider {
 	return &DsraProvider{ProviderData: p}
 }
 
+func getDsraHeader(access_token string) http.Header {
+	header := make(http.Header)
+	header.Set("Accept", "application/json")
+	header.Set("x-li-format", "json")
+	header.Set("Authorization", fmt.Sprintf("Bearer %s", access_token))
+	return header
+}
+
+
 func (p *DsraProvider) GetEmailAddress(s *SessionState) (string, error) {
 
-	req, err := http.NewRequest("GET",
-		p.ValidateURL.String()+"?access_token="+s.AccessToken, nil)
+
+    // Create a new request using http
+    req, err := http.NewRequest("GET", p.ValidateURL.String(), nil)
+
+    // add authorization header to the req
+    req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", s.AccessToken))
+
 	if err != nil {
 		log.Printf("failed building request %s", err)
 		return "", err
@@ -56,4 +71,6 @@ func (p *DsraProvider) GetEmailAddress(s *SessionState) (string, error) {
 	return json.Get("username").String()
 }
 
-
+func (p *DsraProvider) ValidateSessionState(s *SessionState) bool {
+	return validateToken(p, s.AccessToken, getDsraHeader(s.AccessToken))
+}
