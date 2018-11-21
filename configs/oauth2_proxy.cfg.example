@@ -1,46 +1,32 @@
 ## OAuth2 Proxy Config File
 ## https://github.com/bitly/oauth2_proxy
 
+pass-access-token = true
+
 ## <addr>:<port> to listen on for HTTP/HTTPS clients
-# http_address = "127.0.0.1:4180"
+ http_address = "0.0.0.0:4180"
 # https_address = ":443"
-
+skip_provider_button = true
 ## TLS Settings
-# tls_cert_file = ""
-# tls_key_file = ""
+#tls_cert_file = "cert.pem"
+#tls_key_file = "key.pem"
 
-## the OAuth Redirect URL.
-# defaults to the "https://" + requested host header + "/oauth2/callback"
-# redirect_url = "https://internalapp.yourcompany.com/oauth2/callback"
-
-## the http url(s) of the upstream endpoint. If multiple, routing is based on path
-# upstreams = [
-#     "http://127.0.0.1:8080/"
-# ]
 
 ## Log requests to stdout
-# request_logging = true
+ request_logging = true
 
 ## pass HTTP Basic Auth, X-Forwarded-User and X-Forwarded-Email information to upstream
 # pass_basic_auth = true
-# pass_user_headers = true
 ## pass the request Host Header to upstream
 ## when disabled the upstream Host is used as the Host Header
-# pass_host_header = true 
+pass_host_header =  true 
 
-## Email Domains to allow authentication for (this authorizes any email on this domain)
-## for more granular authorization use `authenticated_emails_file`
-## To authorize any email addresses use "*"
-# email_domains = [
-#     "yourcompany.com"
-# ]
 
-## The OAuth Client ID, Secret
-# client_id = "123456.apps.googleusercontent.com"
-# client_secret = ""
+
+
 
 ## Pass OAuth Access token to upstream via "X-Forwarded-Access-Token"
-# pass_access_token = false
+pass_access_token = true 
 
 ## Authenticated Email Addresses File (one email per line)
 # authenticated_emails_file = ""
@@ -53,10 +39,6 @@
 ## Templates
 ## optional directory with custom sign_in.html and error.html
 # custom_templates_dir = ""
-
-## skip SSL checking for HTTPS requests
-# ssl_insecure_skip_verify = false
-
 
 ## Cookie Settings
 ## Name     - the cookie name
@@ -71,10 +53,39 @@
 ##            (ie: 1h means tokens are refreshed on request 1hr+ after it was set)
 ## Secure   - secure cookies are only sent by the browser of a HTTPS connection (recommended)
 ## HttpOnly - httponly cookies are not readable by javascript (recommended)
-# cookie_name = "_oauth2_proxy"
-# cookie_secret = ""
+cookie_name = "_oauth2_proxy"
+cookie_secret = "supersecret"
 # cookie_domain = ""
 # cookie_expire = "168h"
-# cookie_refresh = ""
-# cookie_secure = true
-# cookie_httponly = true
+cookie_expire = "1h"
+cookie_refresh = "30m"
+cookie_secure = false 
+cookie_httponly = false 
+
+## The OAuth Client ID, Secret
+client_id = "xxxxxx"
+client_secret= "xkcjs"
+
+
+
+## Email Domains to allow authentication for (this authorizes any email on this domain)
+## for more granular authorization use `authenticated_emails_file`
+## To authorize any email addresses use "*"
+email_domains = [
+     "*"
+]
+## the http url(s) of the upstream endpoint. If multiple, routing is based on path
+upstreams = [
+"http://10.104.1.36:8080"
+]
+
+ssl-insecure-skip-verify = true
+provider="dsra"
+proxy-prefix="/oauth2"
+## the OAuth Redirect URL.
+# defaults to the "https://" + requested host header + "/oauth2/callback"
+redirect_url="https://oauth2-proxy.dsra.io/oauth2/callback"
+scope="profile"
+login_url="https://oauth2-server.dsra.io/oauth/authorize"
+redeem_url="https://oauth2-server.dsra.io/oauth/token"
+validate_url="https://oauth2-server.dsra.io/oauth/api/me"
