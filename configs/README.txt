@@ -10,7 +10,7 @@ setup:
 		update GOPATH path in ./build.sh if needed, default to ~/oauth2_proxy. 
 		sh build.sh
 		oauth2_proxy will be producted.
-	2. install oauth2_proxy with supervisor
+	2.  configure oauth_proxy to run at http://localhost:4180
 	    configs/oauth2_proxy.conf /etc/supervisor/conf.d/
 	    supervisorctl reread
 	    supervisorctl update
@@ -52,12 +52,7 @@ setup:
 		}	
 	    it's also available at configs/ directory.
 
-	4. configure oauth_proxy to run at http://localhost:4180
-	⁃	    copy configs/oauth2_proxy.cfg from git source tree to /etc/oauth2_proxy directory
-	   	  change clientid, secret, cookie secret value as need
-
-	⁃	  copy configs/oauth2_proxy.conf to /etc/supervisor/conf.d/
-	           supervisorctl reread; supervisorctl update;
+	
 
 
 		
