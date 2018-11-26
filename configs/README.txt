@@ -1,14 +1,27 @@
+Dependency:
+       requires golang-go, supervisor
+       add-apt-repository ppa:longsleep/golang-backports
+       apt-get install golang-go
+       apt-get install supervisor
 setup:
 
-	1. download [prebuild Binary] .
+	1. download and build .
 		git clone  https://github.com/annieweng/oauth2_proxy.git
-		download corresponding precompiled bin/*.tar.gz for your OS.  
-
-	2. register an Oauth Application with DSRA Oauth2 provider at https://oauth2-server.dsra.io
-		take a note of client ID/secret generated from registration. make sure your redirect URL match exactly to where you running the oauth2_proxy from. 
+		update GOPATH path in ./build.sh if needed, default to ~/oauth2_proxy. 
+		sh build.sh
+		oauth2_proxy will be producted.
+	2. install oauth2_proxy with supervisor
+	    configs/oauth2_proxy.conf /etc/supervisor/conf.d/
+	    supervisorctl reread
+	    supervisorctl update
+	3.  register an Oauth Application with DSRA Oauth2 provider at https://oauth2-server.dsra.io
+		take a note of client ID/secret generated from registration. make sure your redirect URL match exactly
+		to  where you running the oauth2_proxy from. 
 		typically this will be http[s]://hostname/oauth2/callback
+	4.    cp  configs/oauth2_proxy.cfg.example /etc/oauth2_proxy.cfg. and update client id and scret to reflect step 3.
+	        supervisorctl restart oauth2_proxy
 
-	3. configure Nginx to run https and proxy all traffic coming to https://hostname to oauth2_proxy:
+	5. configure Nginx to run https and proxy all traffic coming to https://hostname to oauth2_proxy:
 
 	⁃	to generate a self-sign cert for test(this is only needed if you don’t already have SSL configured):
 		mkdir -p /etc/nginx/ssl
