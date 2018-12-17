@@ -3,7 +3,7 @@ vendor
 dist
 .godeps
 *.exe
-
+src
 
 # Go.gitignore
 # Compiled Object files, Static and Dynamic libs (Shared Objects)
