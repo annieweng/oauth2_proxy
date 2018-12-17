@@ -30,6 +30,9 @@ func (s *SessionState) String() string {
 	if s.AccessToken != "" {
 		o += " token:true"
 	}
+	if s.IdToken != "" {
+		o += " id_token:true"
+	}
 	if !s.ExpiresOn.IsZero() {
 		o += fmt.Sprintf(" expires:%s", s.ExpiresOn)
 	}
@@ -42,9 +45,6 @@ func (s *SessionState) String() string {
 func (s *SessionState) EncodeSessionState(c *cookie.Cipher) (string, error) {
 	if c == nil || s.AccessToken == "" {
 		return s.accountInfo(), nil
-	}
-	if s.IdToken != "" {
-		o += " id_token:true"
 	}
 	return s.EncryptedString(c)
 }
@@ -116,12 +116,13 @@ func DecodeSessionState(v string, c *cookie.Cipher) (s *SessionState, err error)
 		}
 	}
 
-		if chunks[2] != "" {
+	if chunks[2] != "" {
 		if sessionState.IdToken, err = c.Decrypt(chunks[2]); err != nil {
 			return nil, err
 		}
 	}
- 	ts, _ := strconv.Atoi(chunks[3])
+
+	ts, _ := strconv.Atoi(chunks[3])
 	sessionState.ExpiresOn = time.Unix(int64(ts), 0)
 
 	if chunks[4] != "" {
