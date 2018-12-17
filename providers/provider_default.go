@@ -60,6 +60,7 @@ func (p *ProviderData) Redeem(redirectURL, code string) (s *SessionState, err er
 	if err == nil {
 		s = &SessionState{
 			AccessToken: jsonResponse.AccessToken,
+			IdToken: jsonResponse.AccessToken,
 		}
 		return
 	}
